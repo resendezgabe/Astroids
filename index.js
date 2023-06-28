@@ -3,14 +3,49 @@ window.onload = function() {
     const context = canvas.getContext("2d");
     const scoreDiv = document.getElementById("score");
 
-    let player = { x: 100, y: 100, radius: 20, dx: 2, dy: -2, pulse: 0, trail: [] };
+    let player = { x: 100, y: 100, radius: 20, dx: 0, dy: 0, pulse: 0, trail: [] };
     let score = 0;
     let shapes = [];
     let particles = [];
     let gameInterval;
     let level = 1;
-
     let stars = [];
+
+    // This function returns a normalized vector from the player to the target.
+    function getDirectionVector(player, target) {
+        let dx = target.x - player.x;
+        let dy = target.y - player.y;
+        let distance = Math.sqrt(dx * dx + dy * dy);
+
+        // Normalize the vector
+        dx /= distance;
+        dy /= distance;
+
+        return { dx, dy };
+    }
+
+    // This function sets the player's velocity towards the target.
+    function movePlayerTo(target) {
+        let direction = getDirectionVector(player, target);
+
+        // Set the player's velocity
+        let speed = 2;  // Adjust speed as desired
+        player.dx = direction.dx * speed;
+        player.dy = direction.dy * speed;
+    }
+
+    // Event listener for mouse clicks
+    canvas.addEventListener('click', function(event) {
+        // Get the mouse click position
+        let rect = canvas.getBoundingClientRect();
+        let clickPos = {
+            x: event.clientX - rect.left,
+            y: event.clientY - rect.top
+        };
+
+           // Move the player to the clicked position
+           movePlayerTo(clickPos);
+        });
 
     // Create a bunch of star objects and add them to the array
     for(let i = 0; i < 200; i++) {
